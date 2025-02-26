@@ -89,8 +89,8 @@ public class UserRepository {
         return getUser;
     }
 
-    public static List<Object> findAll(){
-        List<Object> findUsers = new ArrayList<>();
+    public static List<User> findAll(){
+        List<User> findUsers = new ArrayList<>();
         try {
             String sql = "SELECT id, firstname, lastname, email FROM users";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -107,5 +107,28 @@ public class UserRepository {
             e.printStackTrace();
         }
         return findUsers;
+    }
+
+    public static User update(User user, String email) {
+        User updateUser = findByEmail(email);
+        try {
+            String sql = "UPDATE users SET firstname=?, lastname=?, email=?, password=? WHERE id=?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, user.getFirstname());
+            preparedStatement.setString(2, user.getLastname());
+            preparedStatement.setString(3, user.getEmail());
+            preparedStatement.setString(4, user.getPassword());
+            preparedStatement.setInt(5, updateUser.getId());
+            int nbrRows = preparedStatement.executeUpdate();
+            if(nbrRows > 0){
+                updateUser.setFirstname(user.getFirstname());
+                updateUser.setLastname(user.getLastname());
+                updateUser.setEmail(user.getEmail());
+                updateUser.setPassword(user.getPassword());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return updateUser;
     }
 }
