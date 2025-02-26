@@ -6,6 +6,9 @@ import com.adrar.sqlcda.model.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class UserRepository {
     //Attribut
@@ -41,6 +44,28 @@ public class UserRepository {
         return null;
     }
 
+    public static boolean isExist(String email) {
+        boolean getUser = false;
+        try {
+            String sql = "SELECT id FROM users WHERE email = ?";
+            //préparer la requête
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            //Bind le paramètre
+            preparedStatement.setString(1, email);
+            //récupérer le résultat de la requête
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            //Vérification du résultat
+            while(resultSet.next()){
+                getUser = true;
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return getUser;
+    }
+
     public static User findByEmail(String email) {
         User getUser = null;
         try {
@@ -62,5 +87,25 @@ public class UserRepository {
             e.printStackTrace();
         }
         return getUser;
+    }
+
+    public static List<Object> findAll(){
+        List<Object> findUsers = new ArrayList<>();
+        try {
+            String sql = "SELECT id, firstname, lastname, email FROM users";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                User findUser = new User();
+                findUser.setId(resultSet.getInt("id"));
+                findUser.setFirstname(resultSet.getString("firstname"));
+                findUser.setLastname(resultSet.getString("lastname"));
+                findUser.setEmail(resultSet.getString("email"));
+                findUsers.add(findUser);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return findUsers;
     }
 }

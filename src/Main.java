@@ -11,6 +11,13 @@ public class Main {
                 "1234"
         );
         //UserRepository.save(newUser);
-        System.out.println(UserRepository.findByEmail(newUser.getEmail()).getId());
+        //System.out.println(UserRepository.findByEmail(newUser.getEmail()).getId());
+        User getUser = UserRepository.findByEmail("test@test.com");
+        if(getUser != null) {
+            System.out.println(getUser);
+        }
+        else {
+            System.out.println("Le compte n'existe pas");
+        }
     }
 }
