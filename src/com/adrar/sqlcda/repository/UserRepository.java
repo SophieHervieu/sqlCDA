@@ -8,7 +8,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class UserRepository {
     //Attribut
@@ -130,5 +129,26 @@ public class UserRepository {
             e.printStackTrace();
         }
         return updateUser;
+    }
+
+    public static User saveWithRoles(User addUser) {
+        User newUser = null;
+        try {
+            String sql = "INSERT INTO users(firstname, lastname, email, password, role_id)" +
+                    "VALUE(?, ?, ?, ?, ( SELECT id FROM roles WHERE roles_name = ?))";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, addUser.getFirstname());
+            preparedStatement.setString(2, addUser.getLastname());
+            preparedStatement.setString(3, addUser.getEmail());
+            preparedStatement.setString(4, addUser.getPassword());
+            preparedStatement.setString(5, addUser.getRoles().getRolesName());
+            int nbrRows = preparedStatement.executeUpdate();
+            if(nbrRows > 0) {
+                newUser = addUser;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return newUser;
     }
 }
